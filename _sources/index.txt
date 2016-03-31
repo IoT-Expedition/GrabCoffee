@@ -6,7 +6,7 @@
 GiottoDataViewer for iOS
 =========================
 
-.. image:: ./images/device_list.png
+.. image:: ./images/web_interface.png
    :height: 400px
 
 .. image:: ./images/humidity.png
