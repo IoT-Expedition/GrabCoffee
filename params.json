@@ -1,6 +1,0 @@
-{
-  "name": "Grabcoffee",
-  "tagline": "",
-  "body": "# GrabCoffee\r\n\r\nThis repository contains source code of the GrabCoffee demo, which showcases a personal assistant answering question \"Do I have time for a cup of coffee?\"\r\n\r\nFor steps for setup, installation and HOWTOs on running the demo, please check out the [Wiki](https://github.com/IoT-Expedition/GrabCoffee/wiki) page. \r\n",
-  "note": "Don't delete this file! It's used internally to help with page regeneration."
-}
