@@ -68,7 +68,7 @@ $("#queue_length").on('change',function(event, number){
                      "samples":[
                              {
                                  "value": number,
-                                 "time": new Date().getTime()
+                                 "time": new Date().getTime()/1000
                              }
                          ]
                  }
@@ -84,11 +84,11 @@ $("#queue_length").on('change',function(event, number){
     	   xhr.setRequestHeader("Authorization", "bearer " + access_token );
      },
      success: function(data){
-		
+		 
      },
-     error: function() {
-  	   alert("error occurs, checking chrome extension!");
-     }
+	 error: function(xhr, textStatus, error){
+		 alert("Error! Check Extension!");
+	   }
    });
 });
 
@@ -166,20 +166,21 @@ var professorWalkingControl;
 var professorCyclingControl;
 var professorTransitControl;
 var whenMeeting;
+var whenMeetingMinutes;
 var professorArrivalTimeSensor = '2d46d3f0-c082-46e0-821a-92d0ec969ca0';
 var cafeQueueLengthSensor = 'b2b4eb87-acd4-4e4b-9a34-40501d79f99e';
 var timeBeforeMeetingSensor = '19b224d9-4f03-4933-b7f7-be9b132445d1';
 var yourArrivalTimeToCafeSensor = '0bd1975e-3b67-4830-8a51-fb9c90e42156';
 
 //Change this to your own google client ID. 
-var CLIENT_ID = 'CLIENT_ID';
+var CLIENT_ID = '719954238122-em9a9f63bh0hs3nt10j4agr0p1jmvuqh.apps.googleusercontent.com';
 
 var SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 
-var SERVER_URL = "bd-test.andrew.cmu.edu";
+var SERVER_URL = "cmu.buildingdepot.org";
 var PORT = "82";
-var OAUTH_CLIENT_ID = "b7B9dmCP6ClCWAi6efdppL890gkd8PoDcMlx0jC0";
-var OAUTH_CLIENT_SECRET = "X0kFwvpqujOaFzeAQxcskxDm6b9OaoBb29WlVJq09e8wTTgHfg";
+var OAUTH_CLIENT_ID = "BOROLuCYIRssgImaP74BYaNHXK15O4B88MmL2cxd";
+var OAUTH_CLIENT_SECRET = "zLrZ0so9oCxhrSAxpum62r0aLTcX9pM1yFnnThaPA0CZPxjopO";
 var access_token;
 
 // url = 'http://' + self.giotto_rest_api['server']
@@ -201,9 +202,9 @@ function getAuth(){
 	            success: function(res) {
 					access_token = res.access_token;
 	            },
- 		  	    error: function() {
- 		  			   alert("Please check chrome extension!");
- 		  	    }
+				error: function(xhr, textStatus, error){
+				       alert("Error! Check Extension!");
+				  }
 	 });
    
 }
@@ -260,7 +261,8 @@ function whenMeetingStarts() {
   	  var currentTime = currentDate.getTime();
 	  
   	  var diffInMinutes = Date.parse(when)-currentTime;
-  	  whenMeeting = Math.round(diffInMinutes/60000); 
+  	  whenMeeting = Date.parse(when);
+	  whenMeetingMinutes = Math.round(diffInMinutes/60000); 
       }
 
     });
@@ -647,23 +649,24 @@ function initMap() {
 
   meetingMarker.addListener('click',function(event) {
 	loadCalendarApi();
-  meetingInfowindow.setContent(whenMeeting + " mins before meeting starts");
+  meetingInfowindow.setContent(whenMeetingMinutes + " mins before meeting starts");
   meetingInfowindow.open(map, meetingMarker);
   var data = [{
                    "sensor_id": timeBeforeMeetingSensor,
                    "samples":[
                            {
                                "value": whenMeeting,
-                               "time": new Date().getTime()
+                               "time": new Date().getTime()/1000
                            }
                        ]
                }
           ];
+		 
  $.ajax({
 
    type: "POST",
    url: postURL,
-	 data: JSON.stringify(data),
+   data: JSON.stringify(data),
    contentType: "application/json; charset=utf-8",
    dataType: "json",
    beforeSend : function( xhr ) {
@@ -672,9 +675,9 @@ function initMap() {
    success: function(data){
 	   
    },
-   error: function() {
-	   alert("error occurs, checking chrome extension!");
-   }
+   error: function(xhr, textStatus, error){
+         alert("Error! Check Extension!");
+     }
  });
   });
   
@@ -708,7 +711,7 @@ function initMap() {
 			                   "samples":[
 			                           {
 			                               "value": contentString,
-			                               "time": new Date().getTime()
+			                               "time": new Date().getTime()/1000
 			                           }
 			                       ]
 			               }
@@ -726,9 +729,9 @@ function initMap() {
 		  	   success: function(data){
 		  		   
 		  	   },
-		  	   error: function() {
-		  		   alert("error occurs, checking chrome extension!");
-		  	   }
+			   error: function(xhr, textStatus, error){
+			          alert("Error! Check Extension!");
+			     }
 		     });
 	      }
 	    });
@@ -743,6 +746,7 @@ function initMap() {
       icon: 'professor.png'
   });
 
+  
   professorMarker.addListener('dragend',function(event) {
       newProfessorLocation = {lat: event.latLng.lat(), lng:event.latLng.lng()};
 	  
@@ -767,7 +771,7 @@ function initMap() {
 			                   "samples":[
 			                           {
 			                               "value": contentString,
-			                               "time": new Date().getTime()
+			                               "time": new Date().getTime()/1000
 			                           }
 			                       ]
 			               }
@@ -776,18 +780,17 @@ function initMap() {
 	  
 		  	   type: "POST",
 		  	   url: postURL,
-				 data: JSON.stringify(data),
+			   data: JSON.stringify(data),
 		  	   contentType: "application/json; charset=utf-8",
 		  	   dataType: "json",
 		  	   beforeSend : function( xhr ) {
 		      	   xhr.setRequestHeader("Authorization", "bearer " + access_token );
 		       },
 		  	   success: function(data){
-		  		   
 		  	   },
-		  	   error: function() {
-		  		   alert("error occurs, checking chrome extension!");
-		  	   }
+			   error: function(xhr, textStatus, error){
+			          alert("Error! Check Extension!");
+			     }
 		     });
 				
 	      }
